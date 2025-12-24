@@ -12,4 +12,7 @@ tinkering with linux(mostly arch or debian)
 - containerized services that can be run as a non-root user
 - often using podman and podman-compose
 
+4. components
+- software components and tools which can be used in projects
+
 All shell scripts are bash scripts.

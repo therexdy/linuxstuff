@@ -3,7 +3,6 @@
 # Hi, I am Rexdy. Thanks for using my work, please support me by starring this repository on github at https://github.com/therexdy/linuxstuff and if you want to talk to me you can drop a message in my instagram DMs at https://instagram.com/therexdy
 # I have written this script to automate the process of installing and setting up an Arch Linux system. This script must be run as a non root user after doing the initil installation as a root user and logging into as a non root user post reboot, please use https://wiki.archlinux.org/title/Installation_guide to do the initial steps as root user.
 # This script installs sway window manager and it's configured in the way I like it. Feel free to modify the configuration or install KDE Desktop Environment instead for a standard desktop experience.
-# You can open issues at https://github.com/therexdy/linuxscripts/issues
 
 set -euo pipefail
 rexdy='
