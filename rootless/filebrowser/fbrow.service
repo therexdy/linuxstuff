@@ -1,0 +1,17 @@
+[Unit]
+Description=File Browser
+After=network.target
+Before=shutdown.target
+
+[Service]
+Type=simple
+WorkingDirectory=/path/to/docker-compose
+ExecStart=/usr/bin/podman-compose up
+ExecStop=/usr/bin/podman-compose down
+Restart=on-failure
+RestartSec=10s
+TimeoutStartSec=30s
+TimeoutStopSec=60s
+
+[Install]
+WantedBy=multi-user.target

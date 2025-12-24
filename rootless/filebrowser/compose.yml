@@ -1,0 +1,23 @@
+services:
+  filebrowser:
+    image: docker.io/filebrowser/filebrowser:latest
+    container_name: filebrowser
+    hostname: filebrowser
+    volumes:
+      - ./srv:/srv
+      - ./db:/database
+      - ./config:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    ports:
+      - 10001:80
+    restart: unless-stopped
+    cpus: 0.15
+    mem_limit: 128m
+    mem_reservation: 64m
+
+networks:
+  podman:
+    external: true
