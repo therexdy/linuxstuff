@@ -1,6 +1,7 @@
 services:
   nginx:
-    image: docker.io/library/nginx:alpine-slim
+    build: ./nginx
+    image: nrproxy-self-signed:latest
     container_name: xappnginx
     hostname: nrproxy
     ports:

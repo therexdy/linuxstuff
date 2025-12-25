@@ -1,0 +1,3 @@
+- move all files in this current directory except the `compose.yml` into a directory named `nginx`
+- modify the contents of `compose.yml` to add the upstream service, use `hostname` property and remember the hostname of the upstream service 
+- modify the `nginx.conf` to point to the upstream service host

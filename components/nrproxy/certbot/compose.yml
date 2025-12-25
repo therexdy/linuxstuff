@@ -1,0 +1,17 @@
+services:
+  certbot:
+    build: .
+    image: certbot-temp:latest
+    container_name: certbot-get-certs
+    hostname: certbot
+    volumes:
+      - ./public:/public
+      - ./certs:/etc/letsencrypt/
+    environment:
+        DOMAIN: example.com
+    ports:
+      - 80:80
+
+networks:
+  podman:
+    external: true
