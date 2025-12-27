@@ -1,0 +1,151 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod_name
+  labels:
+    app: app_name
+    env: production # staging, development
+  annotations:
+    description: "pod description"
+spec:
+  serviceAccountName: service_account_name # default
+  restartPolicy: Always # Never, OnFailure
+  dnsPolicy: ClusterFirst # Default, ClusterFirstWithHostNet, None
+  priorityClassName: high-priority # system-node-critical, system-cluster-critical
+
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+    seccompProfile:
+      type: RuntimeDefault # Unconfined, Localhost
+
+  containers:
+    - name: container_name
+      image: docker.io/library/image:tag
+      imagePullPolicy: IfNotPresent # Always, Never
+
+      ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP # UDP, SCTP
+
+      env:
+        - name: VAR
+          value: value
+        - name: SECRET_VAR
+          valueFrom:
+            secretKeyRef:
+              name: secret_name
+              key: secret_key
+        - name: CONFIG_VAR
+          valueFrom:
+            configMapKeyRef:
+              name: configmap_name
+              key: config_key
+
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "250m"
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
+
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        runAsUser: 1000
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
+          add:
+            - NET_BIND_SERVICE # CAP_NET_ADMIN, CAP_SYS_TIME
+
+      livenessProbe:
+        httpGet:
+          path: /healthz
+          port: 8080
+          scheme: HTTP # HTTPS
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+        successThreshold: 1
+        # exec:
+        #   command: ["cat", "/tmp/healthy"]
+        # tcpSocket:
+        #   port: 8080
+
+      readinessProbe:
+        httpGet:
+          path: /ready
+          port: 8080
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        timeoutSeconds: 3
+        failureThreshold: 3
+        successThreshold: 1
+
+      startupProbe:
+        httpGet:
+          path: /startup
+          port: 8080
+        initialDelaySeconds: 0
+        periodSeconds: 5
+        timeoutSeconds: 3
+        failureThreshold: 30
+        successThreshold: 1
+
+      volumeMounts:
+        - name: name_of_mount
+          mountPath: /container/path
+          readOnly: true # false
+        - name: tmp_mount
+          mountPath: /tmp
+
+  volumes:
+    - name: name_of_mount
+      hostPath:
+        path: /host/path
+        type: DirectoryOrCreate # FileOrCreate, File, Directory
+    - name: tmp_mount
+      emptyDir: {}
+    # - name: config_volume
+    #   configMap:
+    #     name: configmap_name
+    # - name: secret_volume
+    #   secret:
+    #     secretName: secret_name
+    # - name: pvc_volume
+    #   persistentVolumeClaim:
+    #     claimName: pvc_name
+
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution: # preferredDuringSchedulingIgnoredDuringExecution
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: node-type
+                operator: In # NotIn, Exists, DoesNotExist, Gt, Lt
+                values:
+                  - high-memory
+    # podAntiAffinity:
+    #   preferredDuringSchedulingIgnoredDuringExecution:
+    #     - weight: 100
+    #       podAffinityTerm:
+    #         labelSelector:
+    #           matchLabels:
+    #             app: app_name
+    #         topologyKey: kubernetes.io/hostname
+
+  tolerations:
+    - key: "node-role"
+      operator: "Equal" # Exists
+      value: "database"
+      effect: "NoSchedule" # PreferNoSchedule, NoExecute
+
+  # nodeSelector:
+  #   disktype: ssd
+
