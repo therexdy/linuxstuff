@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginxrp
+spec:
+  restartPolicy: Always
+  hostNetwork: false
+
+  containers:
+  - name: main
+    image: localhost/nginxrp:latest
+    ports:
+    - containerPort: 443
+      hostPort: 8443
+    volumeMounts:
+    - name: localtime
+      mountPath: /etc/localtime
+      readOnly: true
+    - name: nginx-conf
+      mountPath: /etc/nginx/nginx.conf
+      readOnly: true
+    - name: nginx-certs
+      mountPath: /etc/nginx/certs
+
+  volumes:
+  - name: localtime
+    hostPath:
+      path: /etc/localtime
+      type: File
+  - name: nginx-conf
+    hostPath:
+      path: ./nginx.conf
+      type: File
+  - name: nginx-certs
+    hostPath:
+      path: ./certs
+      type: DirectoryOrCreate
+

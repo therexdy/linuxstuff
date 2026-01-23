@@ -1,0 +1,13 @@
+[Unit]
+Description=Jellyfin Service
+After=network-online.target
+
+[Kube]
+Yaml=/path/to/play.yaml
+WorkDir=/path/to/
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
