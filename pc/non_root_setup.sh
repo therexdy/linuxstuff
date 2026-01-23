@@ -48,7 +48,7 @@ neovim_setup(){
     check_install neovim
     info_printf "Setting up Neovim\n"
     if [[ ! -d "./dotstuff/.git" ]]; then
-        git clone https://codeberg.org/therexdy/dotstuff.git
+        git clone https://github.com/b69ed954/dotstuff.git
     fi
     check_install rsync
     mkdir -p "$HOME/.config/nvim/"
@@ -62,7 +62,7 @@ basic_setup(){
     local list=( neovim git gcc go zip unzip nftables ncdu clang bash-completion rsync usbutils ripgrep curl wget htop openssh )
     sudo pacman -S --noconfirm --needed "${list[@]}"
     if [[ ! -d "./dotstuff" ]]; then
-        git clone https://codeberg.org/therexdy/dotstuff.git 
+        git clone https://github.com/b69ed954/dotstuff.git 
     fi
     if [[ -f "$HOME/.bashrc" ]]; then
         cp "$HOME/.bashrc" ./backup/bashrc
@@ -85,7 +85,7 @@ bluetooth_setup(){
 setup_dotfiles() {
     info_printf "Setting Dotfiles\n"
     if [[ ! -d "./dotstuff/.git" ]]; then
-        git clone https://codeberg.org/therexdy/dotstuff.git 
+        git clone https://github.com/b69ed954/dotstuff.git 
     fi
     check_install rsync 
     if [[ -d "$HOME/.config" ]]; then
@@ -97,7 +97,7 @@ setup_dotfiles() {
     rsync -a ./dotstuff/dotconfig/ "$HOME/.config"
      
     if [[ ! -d "./bigfiles/.git" ]]; then
-        git clone https://codeberg.org/therexdy/bigfiles.git
+        git clone https://github.com/b69ed954/bigfiles.git
     fi
     mkdir -p "$HOME/.local/share/fonts"
     rsync -a ./bigfiles/fonts/ "$HOME/.local/share/fonts/"
