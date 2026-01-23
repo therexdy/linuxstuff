@@ -1,0 +1,16 @@
+[Unit]
+Description= Rexdy NAS Samba
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/path/to/run/dir
+ExecStart=/path/to/run/dir/run.sh start
+ExecStop=/path/to/run/dir/run.sh stop
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=30s
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,0 +1,75 @@
+Disclaimer: You need to install Podman before proceeding, use this guide to install https://podman.io/docs/installation.
+
+In this approach I have just used plain Podman Container not podman-compose or pods. I experimented with many other approaches and I've settled with this. I faced many issues with those other approaches but this just works and as a bonus has very little containerization overhead compared to compose or pod.
+
+Copy this entire `samba` directory to where you want to deploy your NAS samba shares then perform these steps
+
+The following steps must be performed as root user so enter root user's shell by using `sudo su` then start with steps.
+## Step 1
+Open the `run.sh` file using a text editor, modify the `sharename` to your liking, if you need more than one share then copy that entire line
+i.e. `-v ./shares/sharename:/sharename \`
+and paste it as it is below that line. Edit the `sharename` for the new share too, repeat this for as many shares as you need.
+
+## Step 2
+Make the Bash Script executable: `chmod +x ./run.sh`
+
+## Step 3
+```bash
+[sharename]
+    path = /sharepath
+    writable = yes
+    browseable = no
+    guest ok = no
+    valid users = user_username
+    write users = user_username
+    force user = user_username
+    hide unreadable = yes
+    create mask = 0600
+    directory mask = 0700
+```
+Find this section in `smb.conf`, this section is for one share, if you have added more shares in `run.sh` then copy paste this section, one such section for each share you have added in `run.sh`.
+
+Then edit each such section, replace `sharename` and `sharepath` with what you have named it in `run.sh` then replace `user_username` with the username for whom you wish to give access to this share. E.g. if `user_username` is replaced with `rexdy` only this user can access this share from client. Password for the user must be set in the future steps hence make a note of these usernames.
+
+## Step 4
+Start the container: `./run.sh start`
+You will be dropped into the container's shell, if you see `root@<random_text>` on your screen then you are inside the container, in here create the users which you have given access to shares in the previous step by using this command:
+```bash
+useradd -u 1010 -s /usr/sbin/nologin <username>
+```
+- `-u 1010` here 1010 is the User-ID, increment this number for every user, I recommend you to start assigning User-IDs from `1010` to avoid confusions later.
+- Make a note of the `<username>` -> `<user-id>` mapping for the users, this is needed for later step.
+- Repeat this step for all the users you have used in `smb.conf`
+
+## Step 5
+Set passwords for these users:
+```bash
+smbpasswd -a <username>
+smbpasswd -e <username>
+```
+- Repeat this step for all the users you have used in `smb.conf`
+- Now exit the container and come back to the host shell by using the `exit` command.
+
+## Step 6
+- Here `cd ./shares` and then `chown -R <user-id> <sharename>` for all the shares. Here you are giving ownership of the shares to the right users.
+- Use the `smb.conf` and the `<username>` -> `<user-id>` map to give ownership of the shares to the right users.
+- This step is crucial, mistakes often occur in this particular step and causes lots of frustration.
+
+## Step 7
+- `./run.sh start`, since the container is already running this will restart the container.
+- After, restart you can access your shares using a client, by using this URL format:
+  Windows: `\\<server-ip>\<sharename>`
+  Linux: varies largely depending on the SMB client but generally it's `smb://<server-ip>/<sharename>`
+
+## Step 8
+- Exec `pwd` and copy that path. This is the absolute path of the directory containing `run.sh`.
+- Open `nas-samba.service` find this line `WorkingDirectory=/path/to/run/dir` replace that `/path/to/run/dir` with the copied path.
+- Then find these lines `ExecStart=/path/to/run/dir/run.sh start` and `ExecStop=/path/to/run/dir/run.sh stop` replace the `/path/to/run/dir` with the copied path.
+
+## Step 9
+- Copy the `nas-samba.service` to `/etc/systemd/system`.
+- Stop the running container by using `./run.sh stop`
+- Then `systemctl daemon-reload` and `systemctl enable --now nas-samba.service
+- Now the container will start automatically when the server boots.
+
+Now the SMB shares are ready.

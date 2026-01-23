@@ -1,0 +1,10 @@
+FROM docker.io/library/debian:stable-slim
+
+COPY ./entrypoint.sh /entrypoint.sh
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends samba && \
+    rm -rf /var/lib/apt/lists/* && \
+    chmod 751 /entrypoint.sh
+
+CMD [ "/entrypoint.sh" ]
