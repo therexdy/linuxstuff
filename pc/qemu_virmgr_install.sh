@@ -39,7 +39,7 @@ while true; do
         "2")
             printf -- "Uninstalling please wait....\n"
             sudo systemctl disable --now libvirtd.service
-            sudo pacman -Rns --noconfirm --needed "${packages[@]}"
+            sudo pacman -Rns --noconfirm "${packages[@]}"
             rm -rf ~/.config/libvirt
             rm -rf ~/.local/share/libvirt
             sudo rm -rf /var/lib/libvirt

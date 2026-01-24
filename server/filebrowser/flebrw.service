@@ -1,0 +1,15 @@
+[Unit]
+Description=Filebrowser Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/path/to/work/dir/
+Restart=on-failure
+ExecStartPre=/usr/bin/podman kube down play.yaml
+ExecStart=/bin/sh -c 'podman kube play --replace play.yaml; exec podman attach filebrowser-main'
+ExecStop=/usr/bin/podman kube down play.yaml
+
+[Install]
+WantedBy=default.target
