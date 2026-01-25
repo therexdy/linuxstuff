@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rexmc
+spec:
+  containers:
+    - name: main
+      image: localhost/rexmc:latest
+      ports:
+      - containerPort: 25565
+        hostPort: 25565
+      volumeMounts:
+      - name: localtime
+        mountPath: /etc/localtime
+        readOnly: true
+      - name: server-files
+        mountPath: /app
+      stdin: true
+      tty: true
+
+  volumes:
+    - name: localtime
+      hostPath:
+        path: /etc/localtime
+        type: File
+    - name: server-files
+      hostPath:
+        path: ./server_files
+        type: DirectoryOrCreate
+

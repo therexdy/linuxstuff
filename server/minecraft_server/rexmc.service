@@ -1,0 +1,16 @@
+[Unit]
+Description=Minecraft Server
+After=default.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/banta/minecraft_server
+ExecStart=/home/banta/minecraft_server/run.sh start
+ExecStop=/home/banta/minecraft_server/run.sh stop
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
