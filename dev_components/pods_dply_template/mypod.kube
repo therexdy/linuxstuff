@@ -1,0 +1,11 @@
+[Unit]
+Description=MyPod Quadlet
+
+[Kube]
+Yaml=play.yaml
+
+[Service]
+WorkingDirectory=/path/to/work/dir
+
+[Install]
+WantedBy=default.target
