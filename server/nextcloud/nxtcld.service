@@ -1,0 +1,18 @@
+[Unit]
+Description=NextCloud Service
+After=default.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/path/to/nxtcld
+
+ExecStartPre=/usr/bin/podman kube down play.yaml
+ExecStart=/usr/bin/podman kube play --replace play.yaml
+ExecStop=/usr/bin/podman kube down play.yaml
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
